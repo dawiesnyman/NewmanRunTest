@@ -97,11 +97,11 @@ stages:
           
           echo 'Run Newman'
           cd Postman/
-          newman run NewmanRunApi.postman_collection.json -e Dev.postman_environment.json --reporters cli,junit
+          newman run NewmanRunApi.postman_collection.json -e Dev.postman_environment.json --reporters cli,junit --reporter-junit-export results\newman-test-results.xml
         
     - task: PublishTestResults@2
       displayName: Publish results
       inputs:
         testResultsFormat: 'JUnit'
-        testResultsFiles: '**/TEST-*.xml'
+        testResultsFiles: '**/*-test-*.xml'
       
