@@ -38,6 +38,7 @@ stages:
           $(workingDirectory)/*.csproj
         arguments: --output $(System.DefaultWorkingDirectory)/publish_output --configuration Release
     - task: Npm@1
+      displayName: Install Newman
       inputs:
         command: 'custom'
         workingDir: $(workingDirectory)
@@ -79,3 +80,19 @@ stages:
               appType: functionApp
               appName: $(functionAppName)
               package: '$(Pipeline.Workspace)/drop/$(Build.BuildId).zip'
+
+  - job: Build
+    displayName: Test
+    pool:
+      vmImage: $(vmImageName)
+
+    steps:
+    - task: Bash@3
+      inputs:
+        targetType: 'inline'
+        script: |
+          # Write your commands here
+          
+          echo 'Run Newman'
+          
+          newman run NewmanRunApi.postman_collection.json -e Dev.postman_environment.json
