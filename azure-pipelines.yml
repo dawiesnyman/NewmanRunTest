@@ -37,6 +37,13 @@ stages:
         projects: |
           $(workingDirectory)/*.csproj
         arguments: --output $(System.DefaultWorkingDirectory)/publish_output --configuration Release
+  
+    - task: CopyFiles@2
+      inputs:
+        SourceFolder: '$(System.DefaultWorkingDirectory)/Postman'
+        Contents: '**'
+        TargetFolder: '$(System.DefaultWorkingDirectory)/publish_output/Postman'
+
     - task: ArchiveFiles@2
       displayName: 'Archive files'
       inputs:
