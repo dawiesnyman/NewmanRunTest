@@ -24,7 +24,7 @@
 			"data": null,
 			"dataMode": "params",
 			"version": 2,
-			"tests": "\r\n\r\n\r\ntests[\"Response time is less than 1000ms\"] = responseTime < 1000;\r\n\r\ntests[\"Body matches string\"] = responseBody.has(\"This HTTP triggered function executed successfully. \");\r\n\r\ntests[\"Status code is 200\"] = responseCode.code === 200;\r\n\r\n/*\r\npm.test(\"Status code is 201\", () => {\r\n  pm.response.to.have.status(201);\r\n});\r\n\r\npm.test(\"Body is string\", function () {\r\n  pm.response.to.have.body(\"This HTTP triggered function executed successfully. Pass a name in the query string or in the request body for a personalized response.\");\r\n});\r\n*/",
+			"tests": "\r\n\r\n\r\ntests[\"Response time is less than 200ms\"] = responseTime < 200;\r\n\r\ntests[\"Body matches string\"] = responseBody.has(\"This HTTP triggered function executed successfully. \");\r\n\r\ntests[\"Status code is 200\"] = responseCode.code === 200;\r\n\r\n/*\r\npm.test(\"Status code is 201\", () => {\r\n  pm.response.to.have.status(201);\r\n});\r\n\r\npm.test(\"Body is string\", function () {\r\n  pm.response.to.have.body(\"This HTTP triggered function executed successfully. Pass a name in the query string or in the request body for a personalized response.\");\r\n});\r\n*/",
 			"currentHelper": "normal",
 			"helperAttributes": {},
 			"time": 1620719658761,
