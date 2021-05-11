@@ -49,63 +49,12 @@ stages:
     - publish: $(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip
       artifact: drop
 
-- stage: Deploy
-  displayName: Deploy stage
-  dependsOn: Build
-  condition: succeeded()
-
-  jobs:
-  - deployment: Deploy
-    displayName: Deploy
-    environment: 'development'
-    pool:
-      vmImage: $(vmImageName)
-
-    strategy:
-      runOnce:
-        deploy:
-
-          steps:
-          - task: AzureFunctionApp@1
-            displayName: 'Azure functions app deploy'
-            inputs:
-              azureSubscription: '$(azureSubscription)'
-              appType: functionApp
-              appName: $(functionAppName)
-              package: '$(Pipeline.Workspace)/drop/$(Build.BuildId).zip'
-
-
-  - job: Test
-    displayName: Test
-    pool:
-      vmImage: $(vmImageName)
-
-    steps:
-    - task: Npm@1
-      displayName: Install Newman
+    - task: PublishBuildArtifacts@1
       inputs:
-        command: 'custom'
-        workingDir: $(workingDirectory)
-        customCommand: 'install -g newman'
-        verbose: true
-    - task: Bash@3
-      displayName: Run Newman collection
-      inputs:
-        targetType: 'inline'
-        script: |
-          # Write your commands here
-          
-          echo 'Run Newman'
-          cd Postman/
-          newman run NewmanRunApi.postman_collection.json -e Dev.postman_environment.json --reporters cli,junit --reporter-junit-export results/newman-test-results.xml
+        PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+        ArtifactName: 'drop'
+        publishLocation: 'Container'
 
-          ls -R 
-          cd results/
-          ls -R
-    - task: PublishTestResults@2
-      displayName: Publish results
-      inputs:
-        testResultsFormat: 'JUnit'
-        testResultsFiles: '**/results/*-test-*.xml'
+
       
       
