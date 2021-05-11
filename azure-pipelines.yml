@@ -85,7 +85,5 @@ stages:
       inputs:
         testResultsFormat: 'JUnit'
         testResultsFiles: '**/results/*-test-*.xml'
-      
+        failTaskOnFailedTests: true
 
-      
-      
