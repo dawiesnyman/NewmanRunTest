@@ -56,36 +56,36 @@ stages:
     - publish: $(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip
       artifact: drop
 
-  - job: Test
-    displayName: Test
-    pool:
-      vmImage: $(vmImageName)
+  # - job: Test
+  #   displayName: Test
+  #   pool:
+  #     vmImage: $(vmImageName)
 
-    steps:
-    - task: Npm@1
-      displayName: Install Newman
-      inputs:
-        command: 'custom'
-        workingDir: $(workingDirectory)
-        customCommand: 'install -g newman'
-        verbose: true
-    - task: Bash@3
-      displayName: Run Newman collection
-      inputs:
-        targetType: 'inline'
-        script: |
-          # Write your commands here
+  #   steps:
+  #   - task: Npm@1
+  #     displayName: Install Newman
+  #     inputs:
+  #       command: 'custom'
+  #       workingDir: $(workingDirectory)
+  #       customCommand: 'install -g newman'
+  #       verbose: true
+  #   - task: Bash@3
+  #     displayName: Run Newman collection
+  #     inputs:
+  #       targetType: 'inline'
+  #       script: |
+  #         # Write your commands here
           
-          echo 'Run Newman'
-          cd Postman/
-          newman run NewmanRunApi.postman_collection.json -e Dev.postman_environment.json --reporters cli,junit --reporter-junit-export results/newman-test-results.xml
-          echo 'Newman tests completed'
-    - task: PublishTestResults@2
-      displayName: Publish results
-      inputs:
-        testResultsFormat: 'JUnit'
-        testResultsFiles: '**/results/*-test-*.xml'
-        failTaskOnFailedTests: true
+  #         echo 'Run Newman'
+  #         cd Postman/
+  #         newman run NewmanRunApi.postman_collection.json -e Dev.postman_environment.json --reporters cli,junit --reporter-junit-export results/newman-test-results.xml
+  #         echo 'Newman tests completed'
+  #   - task: PublishTestResults@2
+  #     displayName: Publish results
+  #     inputs:
+  #       testResultsFormat: 'JUnit'
+  #       testResultsFiles: '**/results/*-test-*.xml'
+  #       failTaskOnFailedTests: true
 
 - stage: Deploy
   displayName: Deploy stage
