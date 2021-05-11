@@ -87,3 +87,66 @@ stages:
         testResultsFiles: '**/results/*-test-*.xml'
         failTaskOnFailedTests: true
 
+- stage: Deploy
+  displayName: Deploy stage
+  dependsOn: Build
+  condition: succeeded()
+
+  jobs:
+  - deployment: Deploy
+    displayName: Deploy
+    environment: 'development'
+    pool:
+      vmImage: $(vmImageName)
+
+    strategy:
+      runOnce:
+        deploy:
+
+          steps:
+          - task: AzureFunctionApp@1
+            displayName: 'Azure functions app deploy'
+            inputs:
+              azureSubscription: '$(azureSubscription)'
+              appType: functionApp
+              appName: $(functionAppName)
+              package: '$(Pipeline.Workspace)/drop/$(Build.BuildId).zip'
+
+- stage: Test
+  displayName: Integration Tests
+  dependsOn: Deploy
+  condition: succeeded()
+  jobs:
+
+  - job: Test
+    displayName: Test
+    pool:
+      vmImage: $(vmImageName)
+
+    steps:
+    - task: Npm@1
+      displayName: Install Newman
+      inputs:
+        command: 'custom'
+        workingDir: $(workingDirectory)
+        customCommand: 'install -g newman'
+        verbose: true
+    - task: Bash@3
+      displayName: Run Newman collection
+      inputs:
+        targetType: 'inline'
+        script: |
+          # Write your commands here
+          
+          echo 'Run Newman'
+          cd Postman/
+          newman run NewmanRunApi.postman_collection.json -e Dev.postman_environment.json --reporters cli,junit --reporter-junit-export results/newman-test-results.xml
+
+          echo 'Newman Runner Complete'
+
+    - task: PublishTestResults@2
+      displayName: Publish results
+      inputs:
+        testResultsFormat: 'JUnit'
+        testResultsFiles: '**/results/*-test-*.xml'
+        failTaskOnFailedTests: true
